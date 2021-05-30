@@ -70,17 +70,13 @@ EOF
 wget -qO - https://api.github.com/repos/caddyserver/caddy/releases/latest |
     grep -o "https://.*/caddy_.*_linux_amd64\.tar\.gz" | xargs wget -qO - | tar xz caddy
 chmod +x caddy
+./caddy start --pidfile $PID_FILE
 
 wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
 mv gabrielecirulli-2048* 2048
 
-./caddy start --pidfile $PID_FILE
-
-wget -qO - https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip |
-    unzip -q - v2ray geoip.dat geosite.dat
-chmod +x v2ray
-mv v2ray app
-
+wget -qO - https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip | unzip -qp - v2ray > app
+chmod +x app
 ./app >/dev/null 2>&1 &
 echo $! >> $PID_FILE
 }
