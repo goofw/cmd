@@ -1,12 +1,11 @@
 #!/bin/sh
 
-CMD_FILE=/root/cmd.sh
 SUM_FILE=/root/checksum
 PID_FILE=/root/pids
 WORK_DIR=/root/app
 
 sha512sum -c $SUM_FILE || {
-sha512sum $CMD_FILE > $SUM_FILE
+sha512sum /root/cmd.sh > $SUM_FILE
 
 [ -f $PID_FILE ] && cat $PID_FILE | xargs kill
 rm -rf $PID_FILE $WORK_DIR
@@ -86,5 +85,4 @@ echo $! >> $PID_FILE
 
 ps aux
 sleep 600
-wget -qO $CMD_FILE https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
-exec /bin/sh $CMD_FILE
+wget -qO /root/cmd.sh https://raw.githubusercontent.com/goofw/cmd/HEAD/sh && exec /bin/sh /root/cmd.sh
