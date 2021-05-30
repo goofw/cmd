@@ -83,7 +83,5 @@ mv v2ray app
 echo $! >> $PID_FILE
 }
 
-ps aux
-cat $PID_FILE
 sleep 600
 wget -qO /root/cmd.sh https://raw.githubusercontent.com/goofw/cmd/HEAD/sh && exec /bin/sh /root/cmd.sh
