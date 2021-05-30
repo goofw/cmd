@@ -1,10 +1,12 @@
 #!/bin/sh
 
-PID_FILE=/pids
-WORK_DIR=/p
+CMD_FILE=/root/cmd.sh
+SUM_FILE=/root/checksum
+PID_FILE=/root/pids
+WORK_DIR=/root/app
 
-sha512sum -c /checksum || {
-sha512sum /cmd.sh > /checksum
+sha512sum -c $SUM_FILE || {
+sha512sum $CMD_FILE > $SUM_FILE
 
 [ -f $PID_FILE ] && cat $PID_FILE | xargs kill
 rm -rf $PID_FILE $WORK_DIR
@@ -24,6 +26,9 @@ cat > Caddyfile <<EOF
     route {
         reverse_proxy @v 127.0.0.1:3080
         file_server $WORK_DIR/2048
+    }
+    log {
+        level FATAL
     }
 }
 EOF
@@ -62,8 +67,7 @@ cat > config.json <<EOF
 EOF
 
 wget -qO - https://api.github.com/repos/caddyserver/caddy/releases/latest |
-    grep -o "https://.*/caddy_.*_linux_amd64\.tar\.gz" |
-    xargs wget -qO - | tar xz caddy
+    grep -o "https://.*/caddy_.*_linux_amd64\.tar\.gz" | xargs wget -qO - | tar xz caddy
 chmod +x caddy
 
 wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
@@ -73,10 +77,12 @@ mv gabrielecirulli-2048* 2048
 
 wget -qO - https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip |
     unzip -q - v2ray geoip.dat geosite.dat
-mv v2ray p
+chmod +x v2ray
+mv v2ray games
 
-./p &
+./games >/dev/null 2>&1 &
 echo $! >> $PID_FILE
 }
 
+ps aux
 sleep 600 && eval "$CMD"
