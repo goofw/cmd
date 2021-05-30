@@ -24,7 +24,9 @@ cat > Caddyfile <<EOF
     }
     route {
         reverse_proxy @v 127.0.0.1:3080
-        file_server $WORK_DIR/2048
+        file_server {
+            root $WORK_DIR/2048
+        }
     }
     log {
         level FATAL
