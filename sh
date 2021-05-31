@@ -1,5 +1,12 @@
 #!/bin/sh
 
+[ -z "$LOG_LEVEL" ] && LOG_LEVEL=none
+[ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
+[ "$LOG_LEVEL" = "info" ] && CADDY_LOG=INFO
+[ "$LOG_LEVEL" = "warning" ] && CADDY_LOG=WARN
+[ "$LOG_LEVEL" = "error" ] && CADDY_LOG=ERROR
+[ "$LOG_LEVEL" = "none" ] && CADDY_LOG=FATAL
+
 SUM_FILE=/root/checksum
 PID_FILE=/root/pids
 WORK_DIR=/root/app
@@ -29,7 +36,7 @@ cat > Caddyfile <<EOF
         }
     }
     log {
-        level FATAL
+        level $CADDY_LOG
     }
 }
 EOF
@@ -37,7 +44,9 @@ EOF
 cat > config.json <<EOF
 {
   "log": {
-    "loglevel": "none"
+    "loglevel": "$LOG_LEVEL",
+    "access": "",
+    "error": ""
   },
   "inbounds": [
     {
