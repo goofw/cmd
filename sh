@@ -86,7 +86,7 @@ mv gabrielecirulli-2048* 2048
 
 wget -qO - https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip | unzip -qp - v2ray > app
 chmod +x app
-./app >/dev/null 2>&1 &
+./app 2>/dev/null &
 echo $! >> $PID_FILE
 }
 
