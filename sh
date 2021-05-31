@@ -18,8 +18,8 @@ cat > Caddyfile <<EOF
 }
 :$PORT {
     @v {
-        path /v$APP_ID
-        header Connection *Upgrade*
+        path /
+        header Connection *pgrade*
         header Upgrade websocket
     }
     route {
@@ -54,7 +54,7 @@ cat > config.json <<EOF
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-          "path": "/v$APP_ID"
+          "path": "/"
         }
       }
     }
