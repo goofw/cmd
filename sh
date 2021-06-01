@@ -7,12 +7,14 @@
 [ "$LOG_LEVEL" = "error" ] && CADDY_LOG=ERROR
 [ "$LOG_LEVEL" = "none" ] && CADDY_LOG=FATAL
 
+[ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
+[ -z "$CMD_FILE" ] && CMD_FILE=/root/cmd.sh
 SUM_FILE=/root/checksum
 PID_FILE=/root/pids
 WORK_DIR=/root/app
 
 sha512sum -c $SUM_FILE || {
-sha512sum /root/cmd.sh > $SUM_FILE
+sha512sum $CMD_FILE > $SUM_FILE
 
 [ -f $PID_FILE ] && cat $PID_FILE | xargs kill
 rm -rf $PID_FILE $WORK_DIR
@@ -22,6 +24,7 @@ cd $WORK_DIR
 cat > Caddyfile <<EOF
 {
     admin off
+    auto_https off
 }
 :$PORT {
     @v {
@@ -84,7 +87,8 @@ chmod +x caddy
 wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
 mv gabrielecirulli-2048* 2048
 
-wget -qO - https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip | unzip -qp - v2ray > app
+wget -qO v.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
+unzip -qp v.zip v2ray > app && rm -f v.zip
 chmod +x app
 if [ "$LOG_LEVEL" = "none" ]; then
     ./app >/dev/null 2>&1 &
@@ -96,5 +100,4 @@ echo $! >> $PID_FILE
 
 sleep 600
 [ -n "$CMD" ] && eval "$CMD"
-[ -n "$URL" ] && wget -qO /root/cmd.sh $URL && exec /bin/sh /root/cmd.sh
-wget -qO /root/cmd.sh https://raw.githubusercontent.com/goofw/cmd/HEAD/sh && exec /bin/sh /root/cmd.sh
+wget -qO $CMD_FILE $URL && exec /bin/sh $CMD_FILE
