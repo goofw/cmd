@@ -7,6 +7,7 @@
 [ "$LOG_LEVEL" = "error" ] && CADDY_LOG=ERROR
 [ "$LOG_LEVEL" = "none" ] && CADDY_LOG=FATAL
 
+[ -z "$PORT" ] && PORT=8080
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
 [ -z "$CMD_FILE" ] && CMD_FILE=/root/cmd.sh
 SUM_FILE=/root/checksum
