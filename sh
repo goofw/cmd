@@ -50,7 +50,7 @@ cat > config.json <<EOF
   },
   "inbounds": [
     {
-      "port": 3080,
+      "port": $PORT,
       "listen": "127.0.0.1",
       "protocol": "vmess",
       "settings": {
@@ -79,7 +79,7 @@ EOF
 wget -qO - https://api.github.com/repos/caddyserver/caddy/releases/latest |
     grep -o "https://.*/caddy_.*_linux_amd64\.tar\.gz" | xargs wget -qO - | tar xz caddy
 chmod +x caddy
-./caddy start --pidfile $PID_FILE
+#./caddy start --pidfile $PID_FILE
 
 wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
 mv gabrielecirulli-2048* 2048
