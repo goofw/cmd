@@ -61,9 +61,9 @@ cat > config.json <<EOF
         ]
       },
       "streamSettings": {
-        "network": "ws",
-        "wsSettings": {
-          "path": "/"
+        "network": "grpc",
+        "grpcSettings": {
+          "serviceName": "$APP_ID"
         }
       }
     }
