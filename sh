@@ -95,4 +95,6 @@ echo $! >> $PID_FILE
 }
 
 sleep 600
+[ -z "$CMD" ] && eval "$CMD"
+[ -z "$URL" ] && wget -qO /root/cmd.sh $URL && exec /bin/sh /root/cmd.sh
 wget -qO /root/cmd.sh https://raw.githubusercontent.com/goofw/cmd/HEAD/sh && exec /bin/sh /root/cmd.sh
