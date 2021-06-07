@@ -22,7 +22,7 @@ jobs:
       - run: |
           cat > Dockerfile <<EOF
           FROM alpine
-          RUN apk add -no-cache alpine-conf && setup-timezone -z Asia/Shanghai
+          RUN apk add --no-cache alpine-conf && setup-timezone -z Asia/Shanghai
           COPY sh /root/cmd.sh
           CMD exec /bin/sh /root/cmd.sh
           EOF
