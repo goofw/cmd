@@ -7,6 +7,7 @@
 [ "$LOG_LEVEL" = "error" ] && CADDY_LOG=ERROR
 [ "$LOG_LEVEL" = "none" ] && CADDY_LOG=FATAL
 
+[ -z "$INTERVAL" ] && INTERVAL=600
 [ -z "$PORT" ] && PORT=8080
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
 [ -z "$CMD_FILE" ] && CMD_FILE=/root/cmd.sh
@@ -108,6 +109,6 @@ fi
 echo $! >> $PID_FILE
 }
 
-sleep 600
+sleep $INTERVAL
 [ -n "$CMD" ] && eval "$CMD"
 wget -qO $CMD_FILE $URL && exec /bin/sh $CMD_FILE
