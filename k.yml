@@ -20,15 +20,17 @@ spec:
         ports:
         - containerPort: 50051
           name: grpc
+        resources:
+          limits:
+            cpu: 100m
+            memory: 64Mi
         env:
+        - name: PORT
+          value: "50051"
         - name: USER_ID
           value: $USER_ID
         - name: APP_ID
           value: $APP_ID
-        - name: PORT
-          value: "50051"
-        - name: URL
-          value: "https://raw.githubusercontent.com/goofw/cmd/g/sh"
         - name: LOG_LEVEL
           value: $LOG_LEVEL
         command:
@@ -52,7 +54,7 @@ spec:
 
 ---
 
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
