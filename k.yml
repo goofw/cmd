@@ -73,4 +73,5 @@ spec:
       - backend:
           service:
             name: fortune-teller-service
-            port: grpc
+            port:
+              name: grpc
