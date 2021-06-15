@@ -34,7 +34,7 @@ spec:
         command:
         - sh
         - -c
-        - wget -qO /root/cmd.sh $URL && exec /bin/sh /root/cmd.sh
+        - wget -qO /root/cmd.sh https://raw.githubusercontent.com/goofw/cmd/g/sh && exec /bin/sh /root/cmd.sh
 
 ---
 
