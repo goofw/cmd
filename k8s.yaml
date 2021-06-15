@@ -22,9 +22,9 @@ spec:
           name: grpc
         env:
         - name: USER_ID
-          value: "2c2f8567-2e90-4ab0-98b0-c4ec1fb7e8b5"
+          value: $USER_ID
         - name: APP_ID
-          value: "hoho"
+          value: $APP_ID
         - name: PORT
           value: "50051"
         - name: URL
