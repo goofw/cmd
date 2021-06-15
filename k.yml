@@ -71,5 +71,6 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: fortune-teller-service
-          servicePort: grpc
+          service:
+            name: fortune-teller-service
+            port: grpc
