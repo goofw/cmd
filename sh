@@ -15,8 +15,8 @@ SUM_FILE=/root/checksum
 PID_FILE=/root/pids
 WORK_DIR=/root/app
 
-sha512sum -c $SUM_FILE || {
-sha512sum $CMD_FILE > $SUM_FILE
+cat $CMD_FILE | sha512sum -c $SUM_FILE || {
+cat $CMD_FILE | sha512sum > $SUM_FILE
 
 [ -f $PID_FILE ] && cat $PID_FILE | xargs kill
 rm -rf $PID_FILE $WORK_DIR
