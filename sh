@@ -34,8 +34,14 @@ cat > Caddyfile <<EOF
         header Connection *pgrade*
         header Upgrade websocket
     }
+    @b {
+        path /b
+        header Connection *pgrade*
+        header Upgrade websocket
+    }
     route {
         reverse_proxy @v 127.0.0.1:3080
+        reverse_proxy @b 127.0.0.1:2080
         file_server {
             root $WORK_DIR/2048
         }
@@ -107,6 +113,13 @@ else
     ./app &
 fi
 echo $! >> $PID_FILE
+
+[ -n "$BBB" ] && {
+wget -qO appb https://github.com/txthinking/brook/releases/latest/download/brook_linux_amd64
+chmod +x appb
+./appb wsserver -l 127.0.0.1:2080 -p $USER_ID --path /b >/dev/null 2>&1 &
+echo $! >> $PID_FILE
+}
 }
 
 sleep $INTERVAL
