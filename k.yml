@@ -1,25 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fortune-teller-app
+  name: server
   labels:
-    k8s-app: fortune-teller-app
+    app: server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      k8s-app: fortune-teller-app
+      app: server
   template:
     metadata:
       labels:
-        k8s-app: fortune-teller-app
+        app: server
     spec:
       containers:
-      - name: fortune-teller-app
+      - name: server
         image: alpine
         ports:
         - containerPort: 50051
-          name: grpc
         resources:
           limits:
             cpu: 100m
@@ -43,37 +42,39 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fortune-teller-service
+  name: server
+  labels:
+    app: server
 spec:
   selector:
-    k8s-app: fortune-teller-app
+    app: server
   ports:
   - port: 50051
+    protocol: TCP
     targetPort: 50051
-    name: grpc
 
 ---
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: server-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
     dev.okteto.com/generate-host: "true"
-  name: fortune-ingress
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   rules:
   # the dev.okteto.com/generate-host tells okteto cloud 
   # to replace ths with the proper value on deploy time
-  - host: fortune-teller.stack.build
+  - host: this-name-does-not-matter
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: fortune-teller-service
+            name: server
             port:
-              name: grpc
+              number: 50051
