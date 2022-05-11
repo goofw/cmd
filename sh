@@ -11,7 +11,7 @@ cd $WORK_DIR
 cat > config.json <<EOF
 {
   "log": {
-    "loglevel": "none",
+    "loglevel": "warning",
     "access": "",
     "error": ""
   },
@@ -54,8 +54,4 @@ EOF
 wget -qO v.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
 unzip -qp v.zip v2ray > app && rm -f v.zip
 chmod +x app
-if [ "$LOG_LEVEL" = "none" ]; then
-    ./app >/dev/null 2>&1 &
-else
-    ./app &
-fi
+./app &
