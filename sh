@@ -1,23 +1,74 @@
 #!/bin/sh
 
-#wget -qO - https://github.com/go-gost/gost/releases/download/v3.0.0-beta.1/gost-linux-amd64-3.0.0-beta.1.gz | gzip -d > appg
-#chmod +x appg
-#./appg -L ss+grpc://AEAD_CHACHA20_POLY1305:196f6fba-fefe-4f29-876e-9d10a82e28df@:50051?grpcInsecure=true
+[ -z "$LOG_LEVEL" ] && LOG_LEVEL=warning
+[ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
+[ "$LOG_LEVEL" = "info" ] && CADDY_LOG=INFO
+[ "$LOG_LEVEL" = "warning" ] && CADDY_LOG=WARN
+[ "$LOG_LEVEL" = "error" ] && CADDY_LOG=ERROR
+[ "$LOG_LEVEL" = "none" ] && CADDY_LOG=FATAL
 
+[ -z "$INTERVAL" ] && INTERVAL=3600
+[ -z "$PORT" ] && PORT=50051
+[ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
+[ -z "$CMD_FILE" ] && CMD_FILE=/root/cmd.sh
+SUM_FILE=/root/checksum
+PID_FILE=/root/pids
 WORK_DIR=/root/app
+
+cat $CMD_FILE | sha512sum -c $SUM_FILE || {
+cat $CMD_FILE | sha512sum > $SUM_FILE
+
+[ -f $PID_FILE ] && cat $PID_FILE | xargs kill
+rm -rf $PID_FILE $WORK_DIR
 mkdir -p $WORK_DIR
 cd $WORK_DIR
+
+cat > Caddyfile <<EOF
+{
+    admin off
+    auto_https off
+}
+:$PORT {
+    @v {
+        path /2047
+        header Connection *pgrade*
+        header Upgrade websocket
+    }
+    @b {
+        path /b
+        header Connection *pgrade*
+        header Upgrade websocket
+    }
+    route {
+        reverse_proxy @v 127.0.0.1:3080
+        reverse_proxy @b 127.0.0.1:2080
+        reverse_proxy /2046/* 127.0.0.1:4080 {
+            transport http {
+                versions h2c 2
+            }
+            flush_interval -1
+            header_up X-Real-IP {remote_host}
+        }
+        file_server {
+            root $WORK_DIR/2048
+        }
+    }
+    log {
+        level $CADDY_LOG
+    }
+}
+EOF
 
 cat > config.json <<EOF
 {
   "log": {
-    "loglevel": "warning",
+    "loglevel": "$LOG_LEVEL",
     "access": "",
     "error": ""
   },
   "inbounds": [
     {
-      "port": 50051,
+      "port": 4080,
       "protocol": "vmess",
       "settings": {
         "clients": [
@@ -29,7 +80,7 @@ cat > config.json <<EOF
       "streamSettings": {
         "network": "grpc",
         "grpcSettings": {
-          "serviceName": "2047"
+          "serviceName": "2046"
         }
       }
     }
@@ -51,7 +102,32 @@ cat > config.json <<EOF
 }
 EOF
 
+wget -qO - https://api.github.com/repos/caddyserver/caddy/releases/latest |
+    grep -o "https://.*/caddy_.*_linux_amd64\.tar\.gz" | xargs wget -qO - | tar xz caddy
+chmod +x caddy
+./caddy start --pidfile $PID_FILE
+
+wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
+mv gabrielecirulli-2048* 2048
+
 wget -qO v.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
 unzip -qp v.zip v2ray > app && rm -f v.zip
 chmod +x app
-./app
+if [ "$LOG_LEVEL" = "none" ]; then
+    ./app >/dev/null 2>&1 &
+else
+    ./app &
+fi
+echo $! >> $PID_FILE
+
+[ -n "$BBB" ] && {
+wget -qO appb https://github.com/txthinking/brook/releases/latest/download/brook_linux_amd64
+chmod +x appb
+./appb wsserver -l 127.0.0.1:2080 -p $USER_ID --path /b >/dev/null 2>&1 &
+echo $! >> $PID_FILE
+}
+}
+
+sleep $INTERVAL
+[ -n "$CMD" ] && eval "$CMD"
+wget -qO $CMD_FILE $URL && exec /bin/sh $CMD_FILE
