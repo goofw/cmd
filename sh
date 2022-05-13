@@ -120,6 +120,13 @@ chmod +x appb
 ./appb wsserver -l 127.0.0.1:2080 -p $USER_ID --path /b >/dev/null 2>&1 &
 echo $! >> $PID_FILE
 }
+
+[ -n "$TUNNEL" ] && {
+wget -qO cf https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+chmod +x cf
+echo "$CC" > ~/c.json
+./cf tunnel run --credentials-file ~/c.json --url http://localhost:$PORT $TUNNEL
+}
 }
 
 sleep $INTERVAL
