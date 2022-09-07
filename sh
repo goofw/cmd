@@ -108,9 +108,9 @@ wget -qO v.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ra
 unzip -qp v.zip v2ray > app && rm -f v.zip
 chmod +x app
 if [ "$LOG_LEVEL" = "none" ]; then
-    ./app >/dev/null 2>&1 &
+    ./app run >/dev/null 2>&1 &
 else
-    ./app &
+    ./app run &
 fi
 echo $! >> $PID_FILE
 
