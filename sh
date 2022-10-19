@@ -9,7 +9,7 @@
 
 [ -z "$INTERVAL" ] && INTERVAL=600
 [ -z "$PORT" ] && PORT=443
-[ -z "$DOMAIN_NAME" ] || DOMAIN_NAME=", $DOMAIN_NAME"
+[ -z "$DOMAIN_NAME" ] || DOMAIN_LINE=", $DOMAIN_NAME"
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
 [ -z "$CMD_FILE" ] && CMD_FILE=/root/cmd.sh
 SUM_FILE=/root/checksum
@@ -29,7 +29,7 @@ cat > Caddyfile <<EOF
     admin off
     auto_https disable_redirects
 }
-:$PORT$DOMAIN_NAME {
+:$PORT$DOMAIN_LINE {
     @v {
         path /2047
         header Connection *pgrade*
