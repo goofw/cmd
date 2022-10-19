@@ -1,7 +1,5 @@
 #!/bin/sh
 
-[ -z "$IPV6" ] && DNS_IP="1.1.1.1" || DNS_IP="2606:4700:4700::1111"
-
 [ -z "$LOG_LEVEL" ] && LOG_LEVEL=none
 [ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
 [ "$LOG_LEVEL" = "info" ] && CADDY_LOG=INFO
@@ -86,10 +84,45 @@ cat > config.json <<EOF
   ],
   "dns": {
     "servers": [
-      "https+local://$DNS_IP/dns-query",
+      "https+local://1.1.1.1/dns-query",
       "localhost"
     ]
   }
+}
+EOF
+
+[ -z "$IPV6" ] || cat > config.json <<EOF
+{
+  "log": {
+    "loglevel": "$LOG_LEVEL",
+    "access": "",
+    "error": ""
+  },
+  "inbounds": [
+    {
+      "port": 3080,
+      "listen": "127.0.0.1",
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "$USER_ID"
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/2047"
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom"
+    }
+  ]
 }
 EOF
 
