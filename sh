@@ -1,5 +1,7 @@
 #!/bin/sh
 
+[ -z "$IPV6" ] && DNS_IP="1.1.1.1" || DNS_IP="2606:4700:4700::1111"
+
 [ -z "$LOG_LEVEL" ] && LOG_LEVEL=none
 [ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
 [ "$LOG_LEVEL" = "info" ] && CADDY_LOG=INFO
@@ -84,7 +86,7 @@ cat > config.json <<EOF
   ],
   "dns": {
     "servers": [
-      "https+local://1.1.1.1/dns-query",
+      "https+local://$DNS_IP/dns-query",
       "localhost"
     ]
   }
