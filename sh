@@ -8,7 +8,8 @@
 [ "$LOG_LEVEL" = "none" ] && CADDY_LOG=FATAL
 
 [ -z "$INTERVAL" ] && INTERVAL=600
-[ -z "$PORT" ] && PORT=8080
+[ -z "$PORT" ] && PORT=443
+[ -z "$DOMAIN_NAME" ] || DOMAIN_NAME=", $DOMAIN_NAME"
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
 [ -z "$CMD_FILE" ] && CMD_FILE=/root/cmd.sh
 SUM_FILE=/root/checksum
@@ -26,22 +27,16 @@ cd $WORK_DIR
 cat > Caddyfile <<EOF
 {
     admin off
-    auto_https off
+    auto_https disable_redirects
 }
-:$PORT {
+:$PORT $DOMAIN_NAME {
     @v {
         path /2047
         header Connection *pgrade*
         header Upgrade websocket
     }
-    @b {
-        path /b
-        header Connection *pgrade*
-        header Upgrade websocket
-    }
     route {
         reverse_proxy @v 127.0.0.1:3080
-        reverse_proxy @b 127.0.0.1:2080
         file_server {
             root $WORK_DIR/2048
         }
@@ -99,6 +94,7 @@ EOF
 wget -qO - https://api.github.com/repos/caddyserver/caddy/releases/latest |
     grep -o "https://.*/caddy_.*_linux_amd64\.tar\.gz" | xargs wget -qO - | tar xz caddy
 chmod +x caddy
+# $XDG_DATA_HOME/caddy or $HOME/.local/share/caddy
 ./caddy start --pidfile $PID_FILE
 
 wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
@@ -113,13 +109,6 @@ else
     ./app run &
 fi
 echo $! >> $PID_FILE
-
-[ -n "$BBB" ] && {
-wget -qO appb https://github.com/txthinking/brook/releases/latest/download/brook_linux_amd64
-chmod +x appb
-./appb wsserver -l 127.0.0.1:2080 -p $USER_ID --path /b >/dev/null 2>&1 &
-echo $! >> $PID_FILE
-}
 
 [ -n "$TUNNEL" ] && {
 wget -qO cf https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
