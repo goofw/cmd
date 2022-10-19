@@ -29,7 +29,7 @@ cat > Caddyfile <<EOF
     admin off
     auto_https disable_redirects
 }
-:$PORT $DOMAIN_NAME {
+:$PORT$DOMAIN_NAME {
     @v {
         path /2047
         header Connection *pgrade*
