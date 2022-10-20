@@ -1,6 +1,6 @@
 FROM ubuntu
 RUN apt-get update; \
-    apt-get install -y --no-install-recommends wget; \
+    apt-get install -y --no-install-recommends ca-certificates wget; \
     rm -rf /var/lib/apt/lists/*
 COPY /etc/gai.conf /etc/gai.conf
 COPY sh /root/cmd.sh
