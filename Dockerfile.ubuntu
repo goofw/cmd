@@ -1,6 +1,16 @@
+FROM golang
+RUN git clone https://git.zx2c4.com/wireguard-go; \
+    cd wireguard-go; \
+    make
+
 FROM ubuntu
+COPY --from=0 /go/wireguard-go/wireguard-go /usr/bin/wireguard-go
 RUN apt-get update; \
-    apt-get install -y --no-install-recommends ca-certificates wget unzip; \
+    apt-get install -y --no-install-recommends \
+            ca-certificates wget unzip \
+            wireguard-tools iproute2 openresolv iptables \
+            curl net-tools iputils-ping \
+    ; \
     rm -rf /var/lib/apt/lists/*
 COPY /etc/gai.conf /etc/gai.conf
 COPY sh /root/cmd.sh
