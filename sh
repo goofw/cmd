@@ -91,41 +91,6 @@ cat > config.json <<EOF
 }
 EOF
 
-[ -z "$IPV6" ] || cat > config.json <<EOF
-{
-  "log": {
-    "loglevel": "$LOG_LEVEL",
-    "access": "",
-    "error": ""
-  },
-  "inbounds": [
-    {
-      "port": 3080,
-      "listen": "127.0.0.1",
-      "protocol": "vmess",
-      "settings": {
-        "clients": [
-          {
-            "id": "$USER_ID"
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "ws",
-        "wsSettings": {
-          "path": "/2047"
-        }
-      }
-    }
-  ],
-  "outbounds": [
-    {
-      "protocol": "freedom"
-    }
-  ]
-}
-EOF
-
 wget -qO - https://api.github.com/repos/caddyserver/caddy/releases/latest |
     grep -o "https://.*/caddy_.*_linux_amd64\.tar\.gz" | xargs wget -qO - | tar xz caddy
 chmod +x caddy
