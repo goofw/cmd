@@ -8,7 +8,6 @@ on:
     paths:
       - '.github/workflows/docker.yml'
       - 'Dockerfile'
-      - 'Dockerfile.ubuntu'
       - 'sh'
     
 concurrency:
@@ -33,10 +32,3 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/2048:latest
-      
-      - uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: Dockerfile.ubuntu
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/2048:ubuntu
