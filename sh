@@ -1,11 +1,11 @@
 #!/bin/sh
 
-[ -z "$LOG_LEVEL" ] && LOG_LEVEL=none
+[ -z "$LOG_LEVEL" ] && LOG_LEVEL=fatal
 [ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
 [ "$LOG_LEVEL" = "info" ] && CADDY_LOG=INFO
-[ "$LOG_LEVEL" = "warning" ] && CADDY_LOG=WARN
+[ "$LOG_LEVEL" = "warn" ] && CADDY_LOG=WARN
 [ "$LOG_LEVEL" = "error" ] && CADDY_LOG=ERROR
-[ "$LOG_LEVEL" = "none" ] && CADDY_LOG=FATAL
+[ "$LOG_LEVEL" = "fatal" ] && CADDY_LOG=FATAL
 
 [ -z "$INTERVAL" ] && INTERVAL=600
 [ -z "$PORT" ] && PORT=443
@@ -29,14 +29,22 @@ cat > Caddyfile <<EOF
     admin off
     auto_https disable_redirects
 }
-:$PORT$DOMAIN_LINE {
-    @v {
+tcp/:$PORT$DOMAIN_LINE {
+    @grpc {
+        path /2046/*
+        protocol grpc
+    }
+    @ws {
         path /2047
         header Connection *pgrade*
         header Upgrade websocket
     }
     route {
-        reverse_proxy @v 127.0.0.1:3080
+        reverse_proxy @grpc h2c://127.0.0.1:3333 {
+            flush_interval -1
+            header_up X-Real-IP {remote_host}
+        }
+        reverse_proxy @ws 127.0.0.1:4444
         file_server {
             root $WORK_DIR/2048
         }
@@ -44,50 +52,6 @@ cat > Caddyfile <<EOF
     log {
         level $CADDY_LOG
     }
-}
-EOF
-
-cat > config.json <<EOF
-{
-  "log": {
-    "loglevel": "$LOG_LEVEL",
-    "access": "",
-    "error": ""
-  },
-  "inbounds": [
-    {
-      "port": 3080,
-      "listen": "127.0.0.1",
-      "protocol": "vmess",
-      "settings": {
-        "clients": [
-          {
-            "id": "$USER_ID"
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "ws",
-        "wsSettings": {
-          "path": "/2047"
-        }
-      }
-    }
-  ],
-  "outbounds": [
-    {
-      "protocol": "freedom",
-      "settings": {
-        "domainStrategy": "UseIP"
-      }
-    }
-  ],
-  "dns": {
-    "servers": [
-      "https+local://1.1.1.1/dns-query",
-      "localhost"
-    ]
-  }
 }
 EOF
 
@@ -100,22 +64,90 @@ chmod +x caddy
 wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
 mv gabrielecirulli-2048* 2048
 
-wget -qO v.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
-unzip -qp v.zip v2ray > app && rm -f v.zip
-chmod +x app
-if [ "$LOG_LEVEL" = "none" ]; then
-    ./app run >/dev/null 2>&1 &
-else
-    ./app run &
-fi
-echo $! >> $PID_FILE
+while true; do
+    CRT_PATH=$(find /root/.local/share -name ${DOMAIN_NAME}.crt)
+    KEY_PATH=$(find /root/.local/share -name ${DOMAIN_NAME}.key)
+    [ -z "$CRT_PATH" -o -z "$KEY_PATH" ] || break
+    sleep 2
+done
 
-[ -n "$TUNNEL" ] && {
-wget -qO cf https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
-chmod +x cf
-echo "$CC" > ~/c.json
-./cf tunnel run --credentials-file ~/c.json --url http://localhost:$PORT $TUNNEL
+cat > config.json <<EOF
+{
+  "log": {
+    "level": "$LOG_LEVEL"
+  },
+  "dns": {
+    "servers": [
+      {
+        "address": "tls://[2606:4700:4700::1111]:853",
+        "strategy": "prefer_ipv6"
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "type": "vmess",
+      "listen_port": 3333,
+      "domain_strategy": "prefer_ipv6",
+      "users": [
+        {
+          "uuid": "$USER_ID"
+        }
+      ],
+      "transport": {
+        "type": "grpc",
+        "service_name": "2046"
+      }
+    },
+    {
+      "type": "vmess",
+      "listen_port": 4444,
+      "domain_strategy": "prefer_ipv6",
+      "users": [
+        {
+          "uuid": "$USER_ID"
+        }
+      ],
+      "transport": {
+        "type": "ws",
+        "path": "/2047"
+      }
+    },
+    {
+      "type": "hysteria",
+      "listen_port": 443,
+      "domain_strategy": "prefer_ipv6",
+      "up": "100 Mbps",
+      "down": "100 Mbps",
+      "obfs": "$USER_ID",
+      "users": [
+        {
+          "auth_str": "$USER_ID"
+        }
+      ],
+      "tls": {
+        "enabled": true,
+        "certificate_path": "$CRT_PATH",
+        "key_path": "$KEY_PATH"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "direct",
+      "tag": "direct",
+      "domain_strategy": "prefer_ipv6"
+    }
+  ]
 }
+EOF
+
+wget -qO - https://api.github.com/repos/SagerNet/sing-box/releases/latest |
+    grep -o "https://.*/sing-box-.*-linux-amd64\.tar\.gz" | xargs wget -qO - | tar xz
+mv sing-box-*-linux-amd64/sing-box app && rm -rf sing-box-*-linux-amd64
+chmod +x app
+./app run &
+echo $! >> $PID_FILE
 }
 
 sleep $INTERVAL
