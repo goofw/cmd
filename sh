@@ -69,9 +69,17 @@ cat > config.json <<EOF
   },
   "inbounds": [
     {
+      "type": "direct",
+      "tag": "in_dns",
+      "listen": "127.0.0.1",
+      "listen_port": 53
+    },
+    {
       "type": "vmess",
       "listen": "127.0.0.1",
       "listen_port": 3333,
+      "sniff": true,
+      "sniff_override_destination": true,
       "domain_strategy": "prefer_ipv4",
       "users": [
         {
@@ -87,6 +95,8 @@ cat > config.json <<EOF
       "type": "vmess",
       "listen": "127.0.0.1",
       "listen_port": 4444,
+      "sniff": true,
+      "sniff_override_destination": true,
       "domain_strategy": "prefer_ipv4",
       "users": [
         {
@@ -103,8 +113,20 @@ cat > config.json <<EOF
     {
       "type": "direct",
       "domain_strategy": "prefer_ipv4"
+    },
+    {
+      "type": "dns",
+      "tag": "out_dns"
     }
-  ]
+  ],
+  "route": {
+    "rules": [
+      {
+        "inbound": "in_dns",
+        "outbound": "out_dns"
+      }
+    ]
+  }
 }
 EOF
 
