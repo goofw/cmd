@@ -74,7 +74,8 @@ cat > config.json <<EOF
       "type": "direct",
       "tag": "in_dns",
       "listen": "127.0.0.1",
-      "listen_port": 53
+      "listen_port": 5353,
+      "network": "tcp"
     },
     {
       "type": "vmess",
