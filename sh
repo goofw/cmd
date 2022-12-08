@@ -11,11 +11,12 @@
 [ -z "$PORT" ] && PORT=8080
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
 [ -z "$USER_ID" ] && USER_ID=$(echo $URL | base64)
-[ -z "$HOME" ] && HOME=/root
-[ -z "$CMD_FILE" ] && CMD_FILE=$HOME/cmd.sh
-SUM_FILE=$HOME/checksum
-PID_FILE=$HOME/pids
-WORK_DIR=$HOME/app
+
+[ -z "$BASE_DIR" ] && BASE_DIR=/root
+[ -z "$CMD_FILE" ] && CMD_FILE=$BASE_DIR/cmd.sh
+SUM_FILE=$BASE_DIR/checksum
+PID_FILE=$BASE_DIR/pids
+WORK_DIR=$BASE_DIR/app
 
 cat $CMD_FILE | sha512sum -c $SUM_FILE || {
 cat $CMD_FILE | sha512sum > $SUM_FILE
@@ -149,5 +150,4 @@ echo $! >> $PID_FILE
 }
 
 sleep $INTERVAL
-[ -n "$CMD" ] && eval "$CMD"
 wget -qO $CMD_FILE $URL && exec /bin/sh $CMD_FILE
