@@ -10,6 +10,7 @@
 [ -z "$INTERVAL" ] && INTERVAL=600
 [ -z "$PORT" ] && PORT=8080
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
+[ -z "$USER_ID" ] && USER_ID=$(echo $URL | base64)
 [ -z "$HOME" ] && HOME=/root
 [ -z "$CMD_FILE" ] && CMD_FILE=$HOME/cmd.sh
 SUM_FILE=$HOME/checksum
