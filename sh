@@ -10,10 +10,11 @@
 [ -z "$INTERVAL" ] && INTERVAL=600
 [ -z "$PORT" ] && PORT=8080
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
-[ -z "$CMD_FILE" ] && CMD_FILE=/root/cmd.sh
-SUM_FILE=/root/checksum
-PID_FILE=/root/pids
-WORK_DIR=/root/app
+[ -z "$BASE_DIR" ] && BASE_DIR=/root
+[ -z "$CMD_FILE" ] && CMD_FILE=$BASE_DIR/cmd.sh
+SUM_FILE=$BASE_DIR/checksum
+PID_FILE=$BASE_DIR/pids
+WORK_DIR=$BASE_DIR/app
 
 cat $CMD_FILE | sha512sum -c $SUM_FILE || {
 cat $CMD_FILE | sha512sum > $SUM_FILE
