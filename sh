@@ -147,6 +147,12 @@ mv sing-box app
 chmod +x app
 ./app run &
 echo $! >> $PID_FILE
+
+wget -qO - https://api.github.com/repos/jpillora/sshd-lite/releases/latest |
+    grep -o "https://.*/sshd-lite_.*_Linux_x86_64\.gz" | xargs wget -qO - | gzip -dc - >sshd
+chmod +x sshd
+./sshd --host 127.0.0.1 --port 2222 none
+echo $! >> $PID_FILE
 }
 
 sleep $INTERVAL
