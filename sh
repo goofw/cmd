@@ -30,6 +30,9 @@ cat > Caddyfile <<EOF
 {
     admin off
     auto_https disable_redirects
+    log {
+        level $CADDY_LOG
+    }
 }
 :$PORT {
     @grpc {
