@@ -142,14 +142,14 @@ wget -qO - https://api.github.com/repos/caddyserver/caddy/releases/latest |
 chmod +x caddy
 ./caddy start --pidfile $PID_FILE
 
-wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
-mv gabrielecirulli-2048* 2048
-
 wget -qO - https://github.com/goofw/sing-box/releases/latest/download/sing-box-linux-amd64.tar.gz | tar xz
 mv sing-box app
 chmod +x app
 ./app run &
 echo $! >> $PID_FILE
+
+wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
+mv gabrielecirulli-2048* 2048
 
 wget -qO - https://api.github.com/repos/jpillora/sshd-lite/releases/latest |
     grep -o "https://.*/sshd-lite_.*_Linux_x86_64\.gz" | xargs wget -qO - | gzip -dc - >sshd
