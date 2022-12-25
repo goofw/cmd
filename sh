@@ -159,5 +159,5 @@ echo $! >> $PID_FILE
 }
 
 sleep $INTERVAL
-[ -z "$HEALTH_CHECK" ] || curl $HEALTH_CHECK
+[ -z "$HEALTH_CHECK" ] || wget -q --spider $HEALTH_CHECK
 wget -qO $CMD_FILE $URL && exec /bin/sh $CMD_FILE
