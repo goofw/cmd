@@ -155,7 +155,8 @@ mv gabrielecirulli-2048* 2048
 wget -qO - https://api.github.com/repos/jpillora/sshd-lite/releases/latest |
     grep -o "https://.*/sshd-lite_.*_Linux_x86_64\.gz" | xargs wget -qO - | gzip -dc - >sshd
 chmod +x sshd
-./sshd --host 127.0.0.1 --port 2222 --shell ${SHELL:-/bin/sh} none >/dev/null 2>&1 &
+[ -f /bin/bash ] && export SHELL=/bin/bash || export SHELL=/bin/sh
+./sshd --host 127.0.0.1 --port 2222 none >/dev/null 2>&1 &
 echo $! >> $PID_FILE
 }
 
