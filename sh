@@ -140,7 +140,7 @@ EOF
 wget -qO - https://api.github.com/repos/caddyserver/caddy/releases/latest |
     grep -o "https://.*/caddy_.*_linux_amd64\.tar\.gz" | xargs wget -qO - | tar xz caddy
 chmod +x caddy
-./caddy start --pidfile $PID_FILE
+XDG_DATA_HOME=/tmp XDG_CONFIG_HOME=/tmp ./caddy start --pidfile $PID_FILE
 
 wget -qO - https://github.com/goofw/sing-box/releases/latest/download/sing-box-linux-amd64.tar.gz | tar xz
 mv sing-box app
