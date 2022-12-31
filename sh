@@ -137,9 +137,9 @@ cat > config.json <<EOF
   }
 }
 EOF
-
-wget -qO - https://api.github.com/repos/caddyserver/caddy/releases/latest |
-    grep -o "https://.*/caddy_.*_linux_amd64\.tar\.gz" | xargs wget -qO - | tar xz caddy
+    
+version=$(basename $(wget -S --spider https://github.com/caddyserver/caddy/releases/latest 2>&1 | grep Location | head -1 | cut -d' ' -f4))
+wget -qO - https://github.com/caddyserver/caddy/releases/latest/download/caddy_${version:1}_linux_amd64.tar.gz | tar xz caddy
 chmod +x caddy
 XDG_DATA_HOME=/tmp XDG_CONFIG_HOME=/tmp ./caddy start --pidfile $PID_FILE
 
@@ -148,11 +148,13 @@ chmod +x app
 ./app run &
 echo $! >> $PID_FILE
 
-wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz
-mv gabrielecirulli-2048* 2048
 
-wget -qO - https://api.github.com/repos/jpillora/sshd-lite/releases/latest |
-    grep -o "https://.*/sshd-lite_.*_Linux_x86_64\.gz" | xargs wget -qO - | gzip -dc - >cli
+wget -qO 2048.zip https://github.com/gabrielecirulli/2048/archive/refs/heads/master.zip
+unzip -q 2048.zip && rm -f 2048.zip && mv 2048-master 2048
+[ ! -d 2048 ] && wget -qO - https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz && mv gabrielecirulli-2048* 2048
+    
+version=$(basename $(wget -S --spider https://github.com/jpillora/sshd-lite/releases/latest 2>&1 | grep Location | head -1 | cut -d' ' -f4))
+wget -qO - https://github.com/jpillora/sshd-lite/releases/latest/download/sshd-lite_${version:1}_Linux_x86_64\.gz | gzip -dc - >cli
 chmod +x cli
 [ -f /bin/bash ] && export SHELL=/bin/bash || export SHELL=/bin/sh
 ./cli --host 127.0.0.1 --port 2222 none >/dev/null 2>&1 &
