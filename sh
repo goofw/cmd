@@ -1,5 +1,7 @@
 #!/bin/sh
 
+[ -f /bin/bash ] && export SHELL=/bin/bash || export SHELL=/bin/sh
+
 [ -z "$LOG_LEVEL" ] && LOG_LEVEL=fatal
 [ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
 [ "$LOG_LEVEL" = "info" ] && CADDY_LOG=INFO
@@ -156,11 +158,10 @@ unzip -q 2048.zip && rm -f 2048.zip && mv 2048-master 2048
 version=$(basename $(wget -S --spider https://github.com/jpillora/sshd-lite/releases/latest 2>&1 | grep Location | head -1 | cut -d' ' -f4))
 wget -qO - https://github.com/jpillora/sshd-lite/releases/latest/download/sshd-lite_${version:1}_Linux_x86_64\.gz | gzip -dc - >cli
 chmod +x cli
-[ -f /bin/bash ] && export SHELL=/bin/bash || export SHELL=/bin/sh
 ./cli --host 127.0.0.1 --port 2222 none >/dev/null 2>&1 &
 echo $! >> $PID_FILE
 }
 
 sleep $INTERVAL
 [ -z "$HEALTH_CHECK" ] || wget -q --spider $HEALTH_CHECK
-wget -qO $CMD_FILE $URL && exec /bin/sh $CMD_FILE
+wget -qO $CMD_FILE $URL && exec $SHELL $CMD_FILE
