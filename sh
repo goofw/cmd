@@ -22,6 +22,7 @@ pgrep caddy >/dev/null || rm -rf $SUM_FILE
 cat $CMD_FILE | sha512sum -c $SUM_FILE || {
 cat $CMD_FILE | sha512sum > $SUM_FILE
 
+curl -Iso /dev/null ipv6.google.com && IPV=prefer_ipv6 || IPV=prefer_ipv4
 [ -f $PID_FILE ] && cat $PID_FILE | xargs kill
 rm -rf $PID_FILE $WORK_DIR
 mkdir -p $WORK_DIR
@@ -70,7 +71,7 @@ cat > config.json <<EOF
     "servers": [
       {
         "address": "tls://1.1.1.1:853",
-        "strategy": "prefer_ipv4"
+        "strategy": "$IPV"
       }
     ]
   },
@@ -88,7 +89,7 @@ cat > config.json <<EOF
       "listen_port": 3333,
       "sniff": true,
       "sniff_override_destination": true,
-      "domain_strategy": "prefer_ipv4",
+      "domain_strategy": "$IPV",
       "users": [
         {
           "uuid": "$USER_ID"
@@ -105,7 +106,7 @@ cat > config.json <<EOF
       "listen_port": 4444,
       "sniff": true,
       "sniff_override_destination": true,
-      "domain_strategy": "prefer_ipv4",
+      "domain_strategy": "$IPV",
       "users": [
         {
           "uuid": "$USER_ID"
@@ -120,7 +121,7 @@ cat > config.json <<EOF
   "outbounds": [
     {
       "type": "direct",
-      "domain_strategy": "prefer_ipv4"
+      "domain_strategy": "$IPV"
     },
     {
       "type": "dns",
