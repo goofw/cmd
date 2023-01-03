@@ -167,5 +167,5 @@ chmod +x cf
 }
 
 sleep $INTERVAL
-[ -z "$HEALTH_CHECK" ] || wget -q --spider $HEALTH_CHECK
-wget -qO $CMD_FILE $URL && exec /bin/bash $CMD_FILE
+[ -z "$HEALTH_CHECK" ] || curl -fsSL -o /dev/null $HEALTH_CHECK
+curl -fsSL -o $CMD_FILE $URL && exec /bin/bash $CMD_FILE
