@@ -161,7 +161,9 @@ echo $! >> $PID_FILE
 
 [ -z "$CF_TOKEN" ] || {
 curl -fsSL -o cf https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
-chmod +x cf && ./cf --protocol http2 tunnel run --token $CF_TOKEN }
+chmod +x cf
+./cf --protocol http2 tunnel run --token $CF_TOKEN >/dev/null 2>&1 &
+}
 }
 
 sleep $INTERVAL
