@@ -9,6 +9,7 @@
 
 [ -z "$INTERVAL" ] && INTERVAL=600
 [ -z "$PORT" ] && PORT=8080
+[ -z "$CF_TOKEN" ] || PORT=44444
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
 [ -z "$USER_ID" ] && USER_ID=$(echo $URL | base64)
 
@@ -157,6 +158,10 @@ curl -fsSL https://github.com/jpillora/sshd-lite/releases/latest/download/sshd-l
 chmod +x cli
 ./cli --host 127.0.0.1 --port 2222 --shell /bin/bash none >/dev/null 2>&1 &
 echo $! >> $PID_FILE
+
+[ -z "$CF_TOKEN" ] || {
+curl -fsSL -o cf https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+chmod +x cf && ./cf --protocol http2 tunnel run --token $CF_TOKEN }
 }
 
 sleep $INTERVAL
