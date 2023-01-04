@@ -149,8 +149,9 @@ chmod +x app
 ./app run &
 echo $! >> $PID_FILE
 
-curl -fsSL -o 2048.zip https://github.com/gabrielecirulli/2048/archive/refs/heads/master.zip
-unzip -q 2048.zip && rm -f 2048.zip && mv 2048-master 2048
+curl -fsSL https://api.github.com/repos/gabrielecirulli/2048/tarball | tar xz && mv gabrielecirulli-2048* 2048
+#curl -fsSL -o 2048.zip https://github.com/gabrielecirulli/2048/archive/refs/heads/master.zip
+#unzip -q 2048.zip && rm -f 2048.zip && mv 2048-master 2048
     
 version=$(basename $(curl -fsSL -o /dev/null -w %{url_effective} https://github.com/jpillora/sshd-lite/releases/latest))
 curl -fsSL https://github.com/jpillora/sshd-lite/releases/latest/download/sshd-lite_${version:1}_Linux_x86_64.gz | gzip -dc - >cli
