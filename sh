@@ -9,7 +9,6 @@
 
 [ -z "$INTERVAL" ] && INTERVAL=600
 [ -z "$PORT" ] && PORT=8080
-[ -z "$CF_TOKEN" ] || PORT=44444
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
 [ -z "$USER_ID" ] && USER_ID=$(echo $URL | base64)
 
