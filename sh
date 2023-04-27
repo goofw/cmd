@@ -19,6 +19,7 @@ PID_FILE=$BASE_DIR/pids
 WORK_DIR=$BASE_DIR/app
 
 pgrep caddy >/dev/null || rm -rf $SUM_FILE
+pgrep app >/dev/null || rm -rf $SUM_FILE
 cat $CMD_FILE | sha512sum -c $SUM_FILE || {
 cat $CMD_FILE | sha512sum > $SUM_FILE
 
