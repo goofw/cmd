@@ -143,7 +143,9 @@ EOF
 version=$(basename $(curl -fsSL -o /dev/null -w %{url_effective} https://github.com/caddyserver/caddy/releases/latest))
 curl -fsSL https://github.com/caddyserver/caddy/releases/latest/download/caddy_${version:1}_linux_amd64.tar.gz | tar xz caddy
 chmod +x caddy
-XDG_DATA_HOME=/tmp XDG_CONFIG_HOME=/tmp ./caddy start --pidfile $PID_FILE
+XDG_DATA_HOME=/tmp XDG_CONFIG_HOME=/tmp ./caddy run &
+echo $! > $PID_FILE
+#XDG_DATA_HOME=/tmp XDG_CONFIG_HOME=/tmp ./caddy start --pidfile $PID_FILE
 
 curl -fsSL https://github.com/goofw/app/releases/latest/download/app-linux-amd64.tar.gz | tar xz app
 chmod +x app
