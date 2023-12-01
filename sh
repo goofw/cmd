@@ -113,6 +113,9 @@ cat > config.json <<EOF
           "uuid": "$USER_ID"
         }
       ],
+      "multiplex": {
+        "enabled": true
+      },
       "transport": {
         "type": "ws",
         "path": "/2047"
