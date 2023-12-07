@@ -38,9 +38,10 @@ cat > Caddyfile <<EOF
     }
 }
 :$PORT {
-    @grpc {
-        path /2046/*
-        protocol grpc
+    @httpupgrade {
+        path /2046
+        header Connection *pgrade*
+        header Upgrade websocket
     }
     @ws {
         path /2047
@@ -48,10 +49,7 @@ cat > Caddyfile <<EOF
         header Upgrade websocket
     }
     route {
-        reverse_proxy @grpc h2c://127.0.0.1:3333 {
-            flush_interval -1
-            header_up X-Real-IP {remote_host}
-        }
+        reverse_proxy @httpupgrade 127.0.0.1:3333
         reverse_proxy @ws 127.0.0.1:4444
         file_server {
             root $WORK_DIR/2048
@@ -96,9 +94,12 @@ cat > config.json <<EOF
           "uuid": "$USER_ID"
         }
       ],
+      "multiplex": {
+        "enabled": true
+      },
       "transport": {
-        "type": "grpc",
-        "service_name": "2046"
+        "type": "httpupgrade",
+        "path": "/2046"
       }
     },
     {
