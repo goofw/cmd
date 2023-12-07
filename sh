@@ -40,8 +40,6 @@ cat > Caddyfile <<EOF
 :$PORT {
     @httpupgrade {
         path /2046
-        header Connection *pgrade*
-        header Upgrade websocket
     }
     @ws {
         path /2047
