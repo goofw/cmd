@@ -69,7 +69,7 @@ cat > config.json <<EOF
   "dns": {
     "servers": [
       {
-        "address": "tls://1.1.1.1:853",
+        "address": "local",
         "strategy": "$IPV"
       }
     ]
