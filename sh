@@ -69,7 +69,7 @@ cat > config.json <<EOF
   "dns": {
     "servers": [
       {
-        "address": "local",
+        "address": "https://1.1.1.1/dns-query",
         "strategy": "$IPV"
       }
     ]
