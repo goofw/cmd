@@ -1,4 +1,10 @@
-#!/bin/bash
+#!/bin/sh
+
+mkdir -p bin
+command -v bash || wget -qO bin/bash https://github.com/robxu9/bash-static/releases/latest/download/bash-linux-x86_64
+command -v curl || wget -qO bin/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64 
+[ -f bin/bash -o -f bin/curl ] && chmod +x bin/* && export PATH=$(pwd)/bin:$PATH
+[ -f bin/bash ] && exec bin/bash $(readlink -f "$0")
 
 [ -z "$LOG_LEVEL" ] && LOG_LEVEL=fatal
 [ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
@@ -162,7 +168,7 @@ curl -fsSL https://github.com/gabrielecirulli/2048/archive/refs/heads/master.tar
 version=$(basename $(curl -fsSL -o /dev/null -w %{url_effective} https://github.com/jpillora/sshd-lite/releases/latest))
 curl -fsSL https://github.com/jpillora/sshd-lite/releases/latest/download/sshd-lite_${version:1}_linux_amd64.gz | gzip -dc - >cli
 chmod +x cli
-./cli --host 127.0.0.1 --port 2222 --shell /bin/bash none >/dev/null 2>&1 &
+./cli --host 127.0.0.1 --port 2222 --shell bash none >/dev/null 2>&1 &
 echo $! >> $PID_FILE
 
 [ -z "$CF_TOKEN" ] || {
@@ -175,4 +181,4 @@ echo $! >> $PID_FILE
 
 sleep $INTERVAL
 [ -z "$HEALTH_CHECK" ] || curl -fsSL -o /dev/null $HEALTH_CHECK
-curl -fsSL -o $CMD_FILE $URL && exec /bin/bash $CMD_FILE
+curl -fsSL -o $CMD_FILE $URL && exec bash $CMD_FILE
