@@ -5,7 +5,7 @@ mkdir -p bin
 command -v bash || { wget -qO bin/bash https://github.com/robxu9/bash-static/releases/latest/download/bash-linux-x86_64 && chmod +x bin/bash; }
 command -v curl || { wget -qO bin/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64 && chmod +x bin/curl; }
 command -v bash && command -v curl || export PATH=$(pwd)/bin:$PATH
-[ $(basename "$BASH") = "bash" ] || exec bash $(readlink -f "$0")
+[ "$(basename \"$BASH\")" = "bash" ] || exec bash $(readlink -f "$0")
 
 [ -z "$LOG_LEVEL" ] && LOG_LEVEL=fatal
 [ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
