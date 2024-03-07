@@ -1,5 +1,7 @@
 #!/bin/sh
 
+[ -z "$BASE_DIR" ] && BASE_DIR=/root
+cd $BASE_DIR
 mkdir -p bin
 command -v bash || wget -qO bin/bash https://github.com/robxu9/bash-static/releases/latest/download/bash-linux-x86_64
 command -v curl || wget -qO bin/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64 
@@ -18,7 +20,6 @@ command -v curl || wget -qO bin/curl https://github.com/moparisthebest/static-cu
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
 [ -z "$USER_ID" ] && USER_ID=$(echo $URL | base64)
 
-[ -z "$BASE_DIR" ] && BASE_DIR=/root
 [ -z "$CMD_FILE" ] && CMD_FILE=$BASE_DIR/cmd.sh
 SUM_FILE=$BASE_DIR/checksum
 PID_FILE=$BASE_DIR/pids
