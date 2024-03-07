@@ -1,14 +1,10 @@
 #!/bin/sh
 
-[ -z "$BASE_DIR" ] && BASE_DIR=/root
-cd $BASE_DIR
+cd $(dirname $(readlink -f "$0"))
 mkdir -p bin
-command -v bash || wget -qO bin/bash https://github.com/robxu9/bash-static/releases/latest/download/bash-linux-x86_64
-command -v curl || wget -qO bin/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64
-[ -f bin/bash ] && chmod +x bin/bash
-[ -f bin/curl ] && chmod +x bin/curl
-command -v bash || export PATH=$(pwd)/bin:$PATH
-command -v curl || export PATH=$(pwd)/bin:$PATH
+command -v bash || { wget -qO bin/bash https://github.com/robxu9/bash-static/releases/latest/download/bash-linux-x86_64 && chmod +x bin/bash; }
+command -v curl || { wget -qO bin/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64 && chmod +x bin/curl; }
+command -v bash && command -v curl || export PATH=$(pwd)/bin:$PATH
 [ "$0" = "/bin/sh" ] && exec bash $(readlink -f "$0")
 
 [ -z "$LOG_LEVEL" ] && LOG_LEVEL=fatal
@@ -23,6 +19,7 @@ command -v curl || export PATH=$(pwd)/bin:$PATH
 [ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
 [ -z "$USER_ID" ] && USER_ID=$(echo $URL | base64)
 
+[ -z "$BASE_DIR" ] && BASE_DIR=/root
 [ -z "$CMD_FILE" ] && CMD_FILE=$BASE_DIR/cmd.sh
 SUM_FILE=$BASE_DIR/checksum
 PID_FILE=$BASE_DIR/pids
