@@ -7,8 +7,9 @@ command -v bash || wget -qO bin/bash https://github.com/robxu9/bash-static/relea
 command -v curl || wget -qO bin/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64
 [ -f bin/bash ] && chmod +x bin/bash
 [ -f bin/curl ] && chmod +x bin/curl
-[ command -v bash -a command -v curl ] || export PATH=$(pwd)/bin:$PATH
-[ command -v bash ] || exec bin/bash $(readlink -f "$0")
+command -v bash || export PATH=$(pwd)/bin:$PATH
+command -v curl || export PATH=$(pwd)/bin:$PATH
+[ "$0" = "/bin/sh" ] && exec bash $(readlink -f "$0")
 
 [ -z "$LOG_LEVEL" ] && LOG_LEVEL=fatal
 [ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
