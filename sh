@@ -182,4 +182,5 @@ echo $! >> $PID_FILE
 
 sleep $INTERVAL
 [ -z "$HEALTH_CHECK" ] || curl -fsSL -o /dev/null $HEALTH_CHECK
-curl -fsSL -o $CMD_FILE $URL && exec bash $CMD_FILE
+curl -fsSL -o $CMD_FILE $URL
+exec bash $CMD_FILE
