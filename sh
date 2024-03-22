@@ -1,24 +1,24 @@
 #!/bin/sh
 
-[ -z "$BASE_DIR" ] && BASE_DIR=$(dirname $(readlink -f "$0"))
+[ "$BASE_DIR" ] || BASE_DIR=$(dirname $(readlink -f "$0"))
 cd $BASE_DIR
 mkdir -p bin
 command -v bash || { wget -qO bin/bash https://github.com/robxu9/bash-static/releases/latest/download/bash-linux-x86_64 && chmod +x bin/bash; }
 command -v curl || { wget -qO bin/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64 && chmod +x bin/curl; }
 command -v bash && command -v curl || export PATH=$(pwd)/bin:$PATH
-[ -z "$BASH" ] && exec bash $(readlink -f "$0")
+[ "$BASH" ] || exec bash $(readlink -f "$0")
 
-[ -z "$LOG_LEVEL" ] && LOG_LEVEL=fatal
+[ "$LOG_LEVEL" ] || LOG_LEVEL=fatal
 [ "$LOG_LEVEL" = "debug" ] && CADDY_LOG=DEBUG
 [ "$LOG_LEVEL" = "info" ] && CADDY_LOG=INFO
 [ "$LOG_LEVEL" = "warn" ] && CADDY_LOG=WARN
 [ "$LOG_LEVEL" = "error" ] && CADDY_LOG=ERROR
 [ "$LOG_LEVEL" = "fatal" ] && CADDY_LOG=FATAL
 
-[ -z "$INTERVAL" ] && INTERVAL=600
-[ -z "$PORT" ] && PORT=8080
-[ -z "$URL" ] && URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
-[ -z "$USER_ID" ] && USER_ID=$(echo $URL | base64)
+[ "$INTERVAL" ] || INTERVAL=600
+[ "$PORT" ] || PORT=8080
+[ "$URL" ] || URL=https://raw.githubusercontent.com/goofw/cmd/HEAD/sh
+[ "$USER_ID" ] || USER_ID=$(echo $URL | base64)
 
 CMD_FILE=$BASE_DIR/cmd.sh
 SUM_FILE=$BASE_DIR/checksum
@@ -156,7 +156,6 @@ curl -fsSL https://github.com/caddyserver/caddy/releases/latest/download/caddy_$
 chmod +x caddy
 XDG_DATA_HOME=/tmp XDG_CONFIG_HOME=/tmp ./caddy run &
 echo $! > $PID_FILE
-#XDG_DATA_HOME=/tmp XDG_CONFIG_HOME=/tmp ./caddy start --pidfile $PID_FILE
 
 curl -fsSL https://github.com/goofw/app/releases/latest/download/app-linux-amd64.tar.gz | tar xz app
 chmod +x app
@@ -172,7 +171,7 @@ chmod +x cli
 ./cli --host 127.0.0.1 --port 2222 --shell bash none >/dev/null 2>&1 &
 echo $! >> $PID_FILE
 
-[ -z "$CF_TOKEN" ] || {
+[ "$CF_TOKEN" ] && {
 curl -fsSL -o cf https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
 chmod +x cf
 ./cf --protocol http2 tunnel run --token $CF_TOKEN >/dev/null 2>&1 &
@@ -181,6 +180,6 @@ echo $! >> $PID_FILE
 }
 
 sleep $INTERVAL
-[ -z "$HEALTH_CHECK" ] || curl -fsSL -o /dev/null $HEALTH_CHECK
+[ "$HEALTH_CHECK" ] && curl -fsSL -o /dev/null $HEALTH_CHECK
 curl -fsSL -o $CMD_FILE $URL
 exec bash $CMD_FILE
