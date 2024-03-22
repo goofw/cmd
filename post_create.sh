@@ -1,5 +1,3 @@
-#!/bin/bash
-
 mkdir -p /root/.ssh && echo $SSH_KEY >/root/.ssh/authorized_keys
 curl -fsSL https://code-server.dev/install.sh | sh
 
@@ -8,4 +6,7 @@ apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         vim \
         man \
-        net-tools dnsutils iputils-ping telnet
+        net-tools \
+        dnsutils \
+        iputils-ping \
+        telnet
