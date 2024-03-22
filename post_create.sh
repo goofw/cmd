@@ -4,6 +4,7 @@ curl -fsSL https://code-server.dev/install.sh | sh
 apt-get update \
     && apt-get upgrade -y \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        tmux \
         vim \
         man \
         net-tools \
