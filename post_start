@@ -1,0 +1,2 @@
+while :; do docker run -d --rm -e USER_ID -e CF_TOKEN -p 8080:8080 goofw/2048 && break || sleep 1; done
+gh cs ports visibility 3000:public 8080:public -c $CODESPACE_NAME
