@@ -74,6 +74,10 @@ cat > config.json <<EOF
     "level": "$LOG_LEVEL"
   },
   "dns": {
+    "hosts": {
+      "remotehost": "127.0.0.1",
+      "dockerhost": "172.17.0.1"
+    },
     "servers": [
       {
         "address": "https://1.1.1.1/dns-query",
