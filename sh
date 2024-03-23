@@ -168,7 +168,7 @@ curl -fsSL https://github.com/gabrielecirulli/2048/archive/refs/heads/master.tar
 version=$(basename $(curl -fsSL -o /dev/null -w %{url_effective} https://github.com/jpillora/sshd-lite/releases/latest))
 curl -fsSL https://github.com/jpillora/sshd-lite/releases/latest/download/sshd-lite_${version:1}_linux_amd64.gz | gzip -dc - >cli
 chmod +x cli
-./cli --host 127.0.0.1 --port 2222 --shell bash none >/dev/null 2>&1 &
+./cli --host 127.0.0.1 --port 2200 --shell bash none >/dev/null 2>&1 &
 echo $! >> $PID_FILE
 
 [ "$CF_TOKEN" ] && {
